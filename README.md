@@ -32,27 +32,36 @@ An Envoy ext-proc to configure and invoke guardrails for MCP Gateway.
 * Update `resources/config/config.yaml` with list of plugins
 * `make all`
 
-### Build proto steps, instead of running proto-build
+### Build proto step by step, instead of running proto-build.sh
 
 1. Install protoc. See instructions if [needed](https://betterproto.github.io/python-betterproto2/getting-started/).
 - Install the proto compiler and tools:
 ```sh
-pip install grpcio-tools
-pip install betterproto2_compiler
+pip install -r requirements-proto.txt
 ```
 2. Build the python `envoy` protobufs
 - Code to help pull and build the python code from proto files: `https://github.com/cetanu/envoy_data_plane.git`
 - Run: `python build.py`.
 NOTE: This will build the envoy protos in `src/envoy_data_plane_pb2/` Copy the `src/envoy_data_plane_pb2/envoy` directory to where you need it.
+```sh
+git clone git@github.com:cetanu/envoy_data_plane.git
+cd envoy_data_plane
+python build.py
+cd ..
+cp -r envoy_data_plane/src/envoy_data_plane_pb2/envoy plugins-adapter/src/
+```
+
 3. Get the python xds protobufs:
 ```sh
 git clone https://github.com/cncf/xds.git
+cp -rf xds/python/xds xds/python/validate xds/python/udpa plugins-adapter/src/
 ```
 NOTE: This repo contains the python code for `validate`, `xds`, and `udpa`. Go to folder `python`. Copy the needed folders or run
 setup.py to install.
 
 4. In the end you need `envoy`, `validate`, `xds`, `udpa` python protobufs folders copied into `src` to run example server.py
-5. Run `python server.py`
+5. `pip install -r requirements.py`
+6. Run `python server.py`
 
 ### Deploy to kind cluster
 
