@@ -1,3 +1,11 @@
+#protobuffs
+
+src/udpa/**
+src/envoy/**
+src/xds/**
+src/validate/**
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
