@@ -44,6 +44,7 @@ pip install -r requirements-proto.txt
 - Run: `python build.py`.
 NOTE: This will build the envoy protos in `src/envoy_data_plane_pb2/` Copy the `src/envoy_data_plane_pb2/envoy` directory to where you need it.
 ```sh
+cd ..
 git clone git@github.com:cetanu/envoy_data_plane.git
 cd envoy_data_plane
 python build.py
@@ -64,9 +65,10 @@ setup.py to install.
 6. Run `python server.py`
 
 ### Deploy to kind cluster
-
+```
+cd plugins-adapter
 make all
-
+```
 
 ### Enable debug logs for mcp-gateway envoy routes if needed
 * From mcp-gateway folder:

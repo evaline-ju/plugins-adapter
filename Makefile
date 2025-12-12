@@ -42,11 +42,10 @@ exec:
 
 delete: IMAGE=$(IMAGE_PUSH)
 delete:
-	envsubst < ext-proc.yaml | kubectl delete -f -
+	kubectl delete -f ext-proc.yaml
 
-deploy: IMAGE=$(IMAGE_PUSH)
 deploy:
-	envsubst < ext-proc.yaml | kubectl apply -f -
+	kubectl apply -f ext-proc.yaml
 	kubectl apply -f filter.yaml
 
 
@@ -63,6 +62,7 @@ deploy_quay: IMAGE=quay.io/julian_stephen/$(IMAGE_PUSH)
 deploy_quay: 
 	$(CONTAINER_RUNTIME) pull $(IMAGE)
 	$(CONTAINER_RUNTIME) tag $(IMAGE) $(IMAGE_LOCAL)
-	kind load docker-image $(IMAGE) --name mcp-gateway
-	envsubst < ext-proc.yaml | kubectl apply -f -
+	kind load docker-image $(IMAGE_LOCAL) --name mcp-gateway
+	kubectl apply -f ext-proc.yaml
+	kubectl apply -f filter.yaml
 

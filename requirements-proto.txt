@@ -1,3 +1,4 @@
+requests==2.32.5
 grpcio>=1.76.0
 grpcio-tools>=1.76.0
 betterproto2==0.9.1
