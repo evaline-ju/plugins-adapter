@@ -1,0 +1,152 @@
+// Plugin API
+
+syntax = "proto3";
+package plugins_example.generic;
+import "google/protobuf/struct.proto";
+
+// MCP primitives at time of writing - prompts, resources, tools
+// Other MCP methods include those with utilities (completion, logging)
+//
+// The goal of this specification is to not mandate that
+// implementers of this specification [i.e. plugin writers]
+// necessarily have to know or specify which MCP primitives
+// that their plugin implementations apply to.
+//
+// Conversely this necessitates that whoever/whatever (e.g. plugin adapter or gateway)
+// calls these plugins will need to allow for the plugins to be
+// called on MCP methods as applicable.
+//
+// Note all protobuf fields are optional by default
+// "Alt." is used to designate alternate naming suggestions
+
+service PluginService {
+
+    // Process a request through the plugin
+    rpc Process(PluginRequest) returns (PluginResponse);
+
+
+    /// Potential others
+    // Batch processor
+    // Stream processing
+    // Health
+    // Info
+
+}
+
+/* Specification 1: The most generic */
+
+message PluginRequest {
+    // Unique request identifier
+    string request_id = 1;
+
+    // This can contain primitive (if applicable) and method
+    // e.g. tools.call or resources.read
+    // Alt. 'primitive' can also be explicitly specified
+    string operation = 2;
+
+    // Generic operation parameters
+    // Basically like map<string, any>
+    // Alt. 'payload'
+    google.protobuf.Struct params = 3;
+
+    // More metadata can potentially be accepted e.g. timestamps, user IDs
+}
+
+
+message PluginResponse {
+
+    // Whether or not to block the request from proceeding based on this plugin
+    // Alt. 'continue_processing' from CF
+    bool allowed = 1;
+
+    // Human-readable reason for decision
+    string reason = 2;
+
+    // More generic metadata can be provided here as well
+    // e.g. plugin classification classes or scores can go here
+    // or further context for the reason/decision as determined by the implementation
+    google.protobuf.Struct metadata = 3;
+
+    ////// Modifications if available
+
+    // Modified parameters
+    google.protobuf.Struct params = 4;
+}
+
+// context forge PluginResult
+// continue_processing (bool whether stop processing?)
+// modified_payload (Any)
+// violation (object)
+//  this includes reason (str), description (str), violation code (str), details (dict), plugin name (private str), mcp error code (int)
+// metadata (generic dict)
+
+
+
+/* Specification 2:  */
+
+
+message PluginRequest {
+    // Unique request identifier
+    string request_id = 1;
+
+    // This can contain primitive (if applicable) and method
+    // e.g. tools.call or resources.read
+    // Alt. 'primitive' can also be explicitly specified
+    string operation = 2;
+
+    // Operation/method arguments
+    google.protobuf.Struct arguments = 3;
+
+    // Payload alt. content for the plugin to examine or process
+    PluginPayload payload = 4;
+
+    // Metadata for the plugin to examine or process
+    PluginMetadata metadata = 5;
+}
+
+message PluginResponse {
+
+    // Decision including action to take based on plugin
+    Decision decision = 1;
+
+    // Human-readable reason for decision
+    string reason = 2;
+
+    // More generic metadata can be provided here as well
+    // e.g. plugin classification classes or scores can go here
+    // or further context for the reason/decision as determined by the implementation
+    // Can be renamed wrt. modified metadata
+    google.protobuf.Struct decision_metadata = 3;
+
+    ////// Modifications if available
+
+    // Modified arguments
+    google.protobuf.Struct arguments = 3;
+
+    // Modified content
+    PluginPayload payload = 4;
+
+    // Modified metadata
+    PluginMetadata metadata = 5;
+}
+
+enum Decision {
+    DECISION_ALLOW = 1;
+    DECISION_ALLOW_WITH_MODS = 2;
+    DECISION_BLOCK = 3; // or deny
+    // This could be expanded with further actions
+    // including requiring more info or trying again later
+}
+
+// Payload content to process
+message PluginPayload {
+
+    string text = 1;
+
+    // Can expand to oneof various types if needed
+
+}
+
+message PluginMetadata {
+    // Identifier info for request source, MCP session info, if helpful
+}
