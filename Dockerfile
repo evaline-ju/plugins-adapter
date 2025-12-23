@@ -17,10 +17,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN mkdir resources
 RUN mkdir src
+RUN mkdir contextforge-plugins-python
 
 COPY src/ ./src/
 COPY resources ./resources/
 COPY plugins ./plugins/
+COPY contextforge-plugins-python ./contextforge-plugins-python/
 
 #WORKDIR /app/src
 # Expose the gRPC port

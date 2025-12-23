@@ -102,6 +102,26 @@ class SearchReplacePlugin(Plugin):
                     payload.result.messages[index].content.text = value
         return PromptPosthookResult(modified_payload=payload)
 
+    def _apply_patterns(self, value):
+        if isinstance(value, str):
+            for pattern, replacement in self.__patterns:
+                value = re.sub(pattern, replacement, value)
+            return value
+
+        if isinstance(value, dict):
+            return {
+                k: self._apply_patterns(v)
+                for k, v in value.items()
+            }
+
+        if isinstance(value, list):
+            return [self._apply_patterns(v) for v in value]
+
+        if isinstance(value, tuple):
+            return tuple(self._apply_patterns(v) for v in value)
+
+        return value
+
     async def tool_pre_invoke(self, payload: ToolPreInvokePayload, context: PluginContext) -> ToolPreInvokeResult:
         """Plugin hook run before a tool is invoked.
 
@@ -114,11 +134,7 @@ class SearchReplacePlugin(Plugin):
         """
         print("tool_pre_invoke")
         if payload.args:
-            for pattern in self.__patterns:
-                for key in payload.args:
-                    if isinstance(payload.args[key], str):
-                        value = re.sub(pattern[0], pattern[1], payload.args[key])
-                        payload.args[key] = value
+            payload.args = self._apply_patterns(payload.args)
         return ToolPreInvokeResult(modified_payload=payload)
 
     async def tool_post_invoke(self, payload: ToolPostInvokePayload, context: PluginContext) -> ToolPostInvokeResult:

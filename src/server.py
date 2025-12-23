@@ -48,12 +48,13 @@ async def getToolPostInvokeResponse(body):
     logger.debug("**** Tool Post Invoke ****")
     payload = ToolPostInvokePayload(name="replaceme", result=body["result"])
     # TODO: hard-coded ids
-    logger.debug("**** Tool Post Invoke result ****")
+    logger.debug("**** Tool Post Invoke payload ****")
     logger.debug(payload)
     global_context = GlobalContext(request_id="1", server_id="2")
-    result, contexts = await manager.invoke_hook(
+    result, _ = await manager.invoke_hook(
         ToolHookType.TOOL_POST_INVOKE, payload, global_context=global_context
     )
+    logger.debug("**** Tool Post Invoke result ****")
     logger.info(result)
     if not result.continue_processing:
         body_resp = ep.ProcessingResponse(
@@ -91,11 +92,11 @@ async def getToolPreInvokeResponse(body):
     global_context = GlobalContext(request_id="1", server_id="2")
     logger.debug("**** Invoking Tool Pre Invoke with payload ****")
     logger.debug(payload)
-    result, contexts = await manager.invoke_hook(
+    result, _ = await manager.invoke_hook(
         ToolHookType.TOOL_PRE_INVOKE, payload, global_context=global_context
     )
     logger.debug("**** Tool Pre Invoke Result ****")
-    logger.info(result)
+    logger.debug(result)
     if not result.continue_processing:
         body_resp = ep.ProcessingResponse(
             immediate_response=ep.ImmediateResponse(
@@ -272,6 +273,7 @@ class ExtProcServicer(ep_grpc.ExternalProcessorServicer):
 async def serve(host: str = "0.0.0.0", port: int = 50052):
     await manager.initialize()
     logger.info(manager.config)
+    logger.info(f"Loaded {manager.plugin_count} plugins")
 
     server = grpc.aio.server()
     # server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

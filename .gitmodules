@@ -1,0 +1,3 @@
+[submodule "contextforge-plugins-python"]
+	path = contextforge-plugins-python
+	url = https://github.com/contextforge-org/contextforge-plugins-python
