@@ -1,0 +1,8 @@
+id: nemo-test
+models:
+  - type: main
+    engine: ollama
+    model: llama3.2:3b-instruct-fp16
+    parameters:
+      # Local ollama instance
+      base_url: http://localhost:11434
