@@ -17,8 +17,9 @@ Result quality may vary. For 'refusals', my results included mostly message repe
 
 ## Local
 
-`local_test.py` is a small example of trying out a locally-provided config. Note here that the configs under `hello_world_config` dir also point to an `ollama`-served model via localhost. The `rails.co` is a replica of https://github.com/NVIDIA-NeMo/Guardrails/blob/develop/examples/bots/hello_world/rails.co.
-
+`local_test.py` is a small example of trying out a locally-provided config. THe configs generally point to an `ollama`-served model via localhost
+- The `hello_world_config` dir has the most basic example with its `rails.co` a replica of https://github.com/NVIDIA-NeMo/Guardrails/blob/develop/examples/bots/hello_world/rails.co.
+- The `pii_detect_config` dir has a simple regex implementation that results in stopped generation with PII detected.
 
 ## Server deployment
 
