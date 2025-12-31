@@ -3,7 +3,7 @@
 FROM public.ecr.aws/docker/library/python:3.12.12-slim
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git \
+    && apt-get install -y --no-install-recommends git gcc g++ \
     && apt-get purge -y --auto-remove \
     && rm -rf /var/lib/apt/lists/*
 
@@ -18,11 +18,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN mkdir resources
 RUN mkdir src
 RUN mkdir contextforge-plugins-python
+RUN mkdir nemo
 
 COPY src/ ./src/
 COPY resources ./resources/
 COPY plugins ./plugins/
 COPY contextforge-plugins-python ./contextforge-plugins-python/
+COPY nemo ./nemo/
 
 #WORKDIR /app/src
 # Expose the gRPC port

@@ -23,10 +23,22 @@ plugins:
           replace: crud
         - search: crud
           replace: yikes
+  - name: "NemoWrapperPlugin"
+    kind: "nemo.plugin_external.NemoWrapperPlugin"
+    description: "A simple Nemo PII detector"
+    version: "0.1.0"
+    author: "EJ"
+    hooks: ["tool_pre_invoke", "tool_post_invoke"]
+    tags: ["plugin", "pre-post"]
+    mode: "enforce"  # enforce | permissive | disabled
+    priority: 150
+    config:
+      foo: bar
 
 # Plugin directories to scan
 plugin_dirs:
   - "contextforge-plugins-python"
+  - "nemo"
   # - "plugins/native"      # Built-in plugins
   # - "plugins/custom"      # Custom organization plugins
   # - "/etc/mcpgateway/plugins"  # System-wide plugins
