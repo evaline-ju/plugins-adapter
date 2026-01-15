@@ -13,8 +13,8 @@ define flow detect_pii_on_tool_input
         # bot refuse just marks the response as refused instead of stopping
         stop
     else
-        # bot say "No PII!"
-        bot finish
+        bot say "No PII!"
+        # bot finish # Problematic - will lead to async cancelled errors
 
-    execute debug_log(value=$pii.found, label="has_ended_flow_with_pii")
-
+    # Also problematic - will lead to async cancelled errors
+    # execute debug_log(value=$pii.found, label="has_ended_flow_with_pii")

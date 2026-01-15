@@ -46,8 +46,16 @@ class NemoWrapperPlugin(Plugin):
         """
         # Very simple PII detection - attempt to block if any PII and does not alter the payload itself
         rails_response = None
-        if payload.args:
-            rails_response = await self._rails.generate_async(messages=[{"role": "user", "content": payload.args}])
+        p = payload.args
+        if p:
+            try:
+                rails_response = await self._rails.generate_async(messages=[{"role": "user", "content": p}])
+            except: #asyncio.exceptions.CancelledError is thrown by nemo, need to catch
+                logging.exception("An error occurred in the nemo plugin except block:")
+            finally:
+                logger.warning("[NemoWrapperPlugin] Async rails executed")
+                logger.warning(rails_response)
+            logger.warning("[NemoWrapperPlugin] Plugin try done")
         if rails_response and "PII detected" in rails_response["content"]:
             logger.warning("[NemoWrapperPlugin] PII detected, stopping processing")
             return ToolPreInvokeResult(modified_payload=payload, continue_processing=False)
