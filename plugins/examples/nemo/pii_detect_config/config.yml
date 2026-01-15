@@ -1,0 +1,13 @@
+id: pii-tool-test
+
+models:
+  - type: main
+    engine: ollama
+    model: mistral
+    parameters:
+      # Local ollama instance
+      base_url: http://host.docker.internal:11434
+rails:
+  input:
+    flows:
+      - detect_pii_on_tool_input

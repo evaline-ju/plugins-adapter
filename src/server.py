@@ -91,14 +91,20 @@ async def getToolPreInvokeResponse(body):
     global_context = GlobalContext(request_id="1", server_id="2")
     logger.debug("**** Invoking Tool Pre Invoke with payload ****")
     logger.debug(payload)
-    result, contexts = await manager.invoke_hook(
-        ToolHookType.TOOL_PRE_INVOKE, payload, global_context=global_context
-    )
+    try:
+      result, contexts = await manager.invoke_hook(
+          ToolHookType.TOOL_PRE_INVOKE, payload, global_context=global_context
+      )
+    except:
+    #except asyncio.CancelledError:
+      logging.exception("An error occurred in the bare except block:")
+      #logging.warning("asyncio.CancelledError")
     logger.debug("**** Tool Pre Invoke Result ****")
     logger.info(result)
     if not result.continue_processing:
         body_resp = ep.ProcessingResponse(
             immediate_response=ep.ImmediateResponse(
+                #status=http_status_pb2.HttpStatus(code=http_status_pb2.OK),
                 status=http_status_pb2.HttpStatus(code=http_status_pb2.Forbidden),
                 details="No go",
             )
@@ -220,7 +226,12 @@ class ExtProcServicer(ep_grpc.ExternalProcessorServicer):
                         logger.info(json.loads(text))
                         body = json.loads(text)
                         if "method" in body and body["method"] == "tools/call":
-                            body_resp = await getToolPreInvokeResponse(body)
+                            try:
+                                body_resp = await getToolPreInvokeResponse(body)
+                            except:
+                                logging.exception("An error occurred in the bare except block:")
+                            finally:
+                                logger.warning("getToolPreInvokeResponse")
                         elif "method" in body and body["method"] == "prompts/get":
                             body_resp = await getPromptPreFetchResponse(body)
                         else:

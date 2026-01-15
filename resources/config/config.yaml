@@ -1,27 +1,38 @@
 # plugins/config.yaml - Main plugin configuration file
 plugins:
 # Self-contained Search Replace Plugin
-  - name: "ReplaceBadWordsPlugin"
-    kind: "plugins.examples.context_forge.internal.regex_filter.search_replace.SearchReplacePlugin"
-    description: "A plugin for finding and replacing words."
+  #- name: "ReplaceBadWordsPlugin"
+  #  kind: "plugins.examples.context_forge.internal.regex_filter.search_replace.SearchReplacePlugin"
+  #  description: "A plugin for finding and replacing words."
+  #  version: "0.1.0"
+  #  author: "Teryl Taylor"
+  #  #hooks: ["prompt_pre_fetch", "prompt_post_fetch", "tool_pre_invoke", "tool_post_invoke"]
+  #  hooks: ["tool_post_invoke"]
+  #  tags: ["plugin", "transformer", "regex", "search-and-replace", "pre-post"]
+  #  mode: "enforce"  # enforce | permissive | disabled
+  #  priority: 150
+  #  conditions:
+  #    # Apply to specific tools/servers
+  #    - prompts: ["test_prompt"]
+  #      server_ids: []  # Apply to all servers
+  #      tenant_ids: []  # Apply to all tenants
+  #  config:
+  #    words:
+  #      - search: crap
+  #        replace: crud
+  #      - search: crud
+  #        replace: yikes
+  - name: "NemoWrapperPlugin"
+    kind: "plugins.examples.nemo.plugin_external.NemoWrapperPlugin"
+    description: "A simple Nemo PII detector"
     version: "0.1.0"
-    author: "Teryl Taylor"
-    #hooks: ["prompt_pre_fetch", "prompt_post_fetch", "tool_pre_invoke", "tool_post_invoke"]
-    hooks: ["tool_post_invoke"]
-    tags: ["plugin", "transformer", "regex", "search-and-replace", "pre-post"]
+    author: "EJ"
+    hooks: ["tool_pre_invoke", "tool_post_invoke"]
+    tags: ["plugin", "pre-post"]
     mode: "enforce"  # enforce | permissive | disabled
     priority: 150
-    conditions:
-      # Apply to specific tools/servers
-      - prompts: ["test_prompt"]
-        server_ids: []  # Apply to all servers
-        tenant_ids: []  # Apply to all tenants
     config:
-      words:
-        - search: crap
-          replace: crud
-        - search: crud
-          replace: yikes
+      foo: bar
 
 # Plugin directories to scan
 plugin_dirs:
@@ -33,6 +44,6 @@ plugin_dirs:
 plugin_settings:
   parallel_execution_within_band: true
   plugin_timeout: 30
-  fail_on_plugin_error: false
+  fail_on_plugin_error: true
   enable_plugin_api: true
   plugin_health_check_interval: 60

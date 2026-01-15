@@ -27,6 +27,10 @@ spec:
       labels:
         app: plugins-adapter
     spec:
+      hostAliases:
+      - ip: "172.17.0.1"
+        hostnames:
+        - "host.docker.internal"
       containers:
         - name: plugins-adapter
           image: plugins-adapter:0.1.0
