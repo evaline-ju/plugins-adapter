@@ -102,11 +102,41 @@ async def getToolPreInvokeResponse(body):
     logger.debug("**** Tool Pre Invoke Result ****")
     logger.info(result)
     if not result.continue_processing:
+        #body_resp = ep.ProcessingResponse(
+        #    immediate_response=ep.ImmediateResponse(
+                #status=http_status_pb2.HttpStatus(code=http_status_pb2.OK),
+        #        status=http_status_pb2.HttpStatus(code=http_status_pb2.Forbidden),
+                #details="No go",
+        #        body_mutation=ep.BodyMutation(body=json.dumps(body).encode("utf-8"))
+
+        #    )
+        #)
+        error_body = {
+            "jsonrpc": body["jsonrpc"],
+            "id": body["id"],
+            "error": {
+                "code": -32000,
+                "message": "No go - Tool args forbidden"
+            }
+        }
         body_resp = ep.ProcessingResponse(
             immediate_response=ep.ImmediateResponse(
-                #status=http_status_pb2.HttpStatus(code=http_status_pb2.OK),
-                status=http_status_pb2.HttpStatus(code=http_status_pb2.Forbidden),
-                details="No go",
+                # ok for stream but body has error
+                status=http_status_pb2.HttpStatus(code=200),
+                headers=ep.HeaderMutation(
+                    set_headers=[
+                        # content-type does not seem to make a difference
+                        core.HeaderValueOption(
+                            header=core.HeaderValue(key="content-type", raw_value="application/json".encode("utf-8"))
+                                            #value="application/json")
+                        ),
+                        core.HeaderValueOption(
+                            header=core.HeaderValue(key="x-mcp-denied", raw_value="True".encode("utf-8"))
+                                            #value="true")
+                        ),
+                    ],
+                ),
+                body=(json.dumps(error_body)).encode("utf-8")
             )
         )
     else:
