@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nemo-guardrails-service
+  namespace: istio-system
+spec:
+  selector:
+    app: nemoguardrails-server
+  # Ports can be updated later
+  ports:
+    - name: http
+      port: 50053
+      targetPort: 8000
+      protocol: TCP
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nemoguardrails-server
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nemoguardrails-server
+  template:
+    metadata:
+      labels:
+        app: nemoguardrails-server
+    spec:
+      containers:
+        - name: nemoguardrails-server
+          # Do not override command for this image
+          image: quay.io/rh-ee-mmisiura/nemo-guardrails:guardrails_checks_with_tools_o1_v1
+          imagePullPolicy: IfNotPresent
+          env:
+          #   # This would be the directory within /config that would be the default to look in
+          #   # If server complains about not being able to find config-ids
+          #   - name: DEFAULT_CONFIG_ID
+          #     value: "hello_world"
+            - name: CONFIG_ID
+              value: rails-custom-action
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config/rails-custom-action
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nemo-config
