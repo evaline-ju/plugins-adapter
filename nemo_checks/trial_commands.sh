@@ -107,6 +107,9 @@ curl -s -X POST "${BASE_URL}${ENDPOINT}" \
 # ============================================
 # USER MESSAGE CONTENT TESTS
 # ============================================
+# Note: for server testing only, not expecting
+# end-user messages through the current gateway
+# ============================================
 
 echo ""
 echo -e "${GREEN}Test 5: Safe content (should be allowed)${NC}"
