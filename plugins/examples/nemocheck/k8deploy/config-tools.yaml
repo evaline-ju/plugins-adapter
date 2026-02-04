@@ -12,9 +12,9 @@ data:
           openai_api_base: "http://0.0.0.0:4000"
           model_name: "meta-llama/llama-3-3-70b-instruct"
           api_key: "None"
-    
+
     passthrough: true
-    
+
     rails:
       input:
         flows:
@@ -79,21 +79,21 @@ data:
         """Block forbidden topics."""
         user_message = context.get("user_message", "").lower()
         forbidden_words = ["chatgpt", "openai", "claude"]
-        
+
         for word in forbidden_words:
             if word in user_message:
                 return "blocked"
-        
+
         return "allowed"
 
     @action(is_system_action=True)
     async def check_output_length(context: dict = {}):
         """Block responses over 100 words."""
         bot_msg = context.get("bot_message", "")
-        
+
         if len(bot_msg.split()) > 100:
             return "blocked"
-        
+
         return "allowed"
 
     @action(is_system_action=True)
