@@ -80,7 +80,7 @@ jobs:
             suffix=-${{ steps.plugin_deps.outputs.suffix }},onlatest=true
           tags: |
             type=ref,event=tag
-            type=ref,event=branch  # TODO: Remove after testing
+            type=ref,event=branch
             type=raw,value=latest,enable=${{ github.ref_type == 'tag' }}
 
       - name: Build and push
