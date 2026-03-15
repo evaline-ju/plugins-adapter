@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - test-image-refactor  # TODO: Remove after testing
   workflow_dispatch:
     inputs:
       plugin_deps:
@@ -78,6 +80,7 @@ jobs:
             suffix=-${{ steps.plugin_deps.outputs.suffix }},onlatest=true
           tags: |
             type=ref,event=tag
+            type=ref,event=branch  # TODO: Remove after testing
             type=raw,value=latest,enable=${{ github.ref_type == 'tag' }}
 
       - name: Build and push
