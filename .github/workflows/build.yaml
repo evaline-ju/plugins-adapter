@@ -4,12 +4,18 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - test-image-ej  # TODO: Remove after testing
   workflow_dispatch:
     inputs:
       plugin_deps:
         description: 'Plugin dependencies to include (comma-separated, e.g., "nemocheck" or "nemo,nemocheck")'
         required: false
         default: 'nemocheck'
+      custom_tag:
+        description: 'Custom tag name for test builds (e.g., "test-security-fixes")'
+        required: false
+        default: ''
 
 permissions: {}
 
@@ -78,6 +84,8 @@ jobs:
             suffix=-${{ steps.plugin_deps.outputs.suffix }},onlatest=true
           tags: |
             type=ref,event=tag
+            type=ref,event=branch
+            type=raw,value=kubecon-eu
             type=raw,value=latest,enable=${{ github.ref_type == 'tag' }}
 
       - name: Build and push
